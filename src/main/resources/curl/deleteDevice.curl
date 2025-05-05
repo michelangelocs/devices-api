@@ -1,0 +1,4 @@
+curl --request DELETE \
+  --url http://localhost:8080/api/devices/delete/6815280838615022ed7c36b3 \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/11.0.2' \

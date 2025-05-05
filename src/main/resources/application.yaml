@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: devices-api
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017/devices-api-db
+
+de.flapdoodle.mongodb.embedded.version: 4.2.13
+
+mongodb:
+  collection-name: device
+  ttlSeconds: 604800
+  quoteTtlSeconds: 604800
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

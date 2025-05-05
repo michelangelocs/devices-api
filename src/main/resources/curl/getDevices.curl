@@ -1,0 +1,11 @@
+curl --request POST \
+  --url http://localhost:8080/graphql \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/11.0.2' \
+  --data '{
+  "query": "query ($brand: String, $state: String) { devices (brand: $brand, state: $state) { id name brand state creationTime } }",
+  "variables": {
+    "brand": null,
+    "state": null
+  }
+}'

@@ -1,0 +1,12 @@
+type Query {
+    device (id: String!) : Device
+    devices (brand: String, state: String) : [Device]
+}
+
+type Device {
+    id: String!
+    name: String!
+    brand: String!
+    state: String!
+    creationTime: String!
+}

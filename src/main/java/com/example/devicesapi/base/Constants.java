@@ -11,5 +11,9 @@ public class Constants {
     public static final String DEVICES_API_DELETE= "DEVICES_API_DELETE: Device with id '{}' deleted";
     public static final String DEVICES_API_DELETE_WARN= "DEVICES_API_DELETE_WARN: Device with id '{}' is in use and cannot be deleted";
     public static final String DEVICES_API_NOT_FOUND= "DEVICES_API_NOT_FOUND: Device with id '{}' not found";
+    public static final String DEVICES_API_REQUIRED_NAME= "DEVICES_API_REQUIRED_NAME: Device name is required";
+    public static final String DEVICES_API_REQUIRED_BRAND= "DEVICES_API_REQUIRED_BRAND: Device brand is required";
+
+
 
 }

@@ -103,7 +103,7 @@ class DevicesServiceTest {
     @Test
     void updateDevice_failure () {
         when(devicesRepository.findById(any(String.class))).thenReturn(Optional.empty());
-        assertNull(devicesService.updateDevice("id", getDevice(State.INACTIVE)));
+        assertThrows(IllegalStateException.class, () -> devicesService.updateDevice("id", getDevice(State.INACTIVE)));
 
         verify(this.appenderMock, times(1)).doAppend(this.logEvenCaptor.capture());
         assertEquals(Level.ERROR, logEvenCaptor.getAllValues().getFirst().getLevel());
@@ -143,7 +143,7 @@ class DevicesServiceTest {
     @Test
     void deleteDevice_failure () {
         when(devicesRepository.findById(any(String.class))).thenReturn(Optional.empty());
-        devicesService.deleteDevice("id");
+        assertThrows(IllegalStateException.class, () -> devicesService.deleteDevice("id"));
 
         verify(this.appenderMock, times(1)).doAppend(this.logEvenCaptor.capture());
         assertEquals(Level.ERROR, logEvenCaptor.getAllValues().getFirst().getLevel());

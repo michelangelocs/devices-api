@@ -6,6 +6,9 @@ import com.example.devicesapi.model.State;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.example.devicesapi.base.Constants.DEVICES_API_REQUIRED_BRAND;
+import static com.example.devicesapi.base.Constants.DEVICES_API_REQUIRED_NAME;
+
 public class Validator {
 
     protected Validator () {
@@ -17,10 +20,10 @@ public class Validator {
         device.setState(Optional.ofNullable(device.getState()).orElse(State.AVAILABLE));
 
         if (Optional.ofNullable(device.getName()).orElse("").isEmpty()) {
-            throw new IllegalArgumentException("Device name is required");
+            throw new IllegalArgumentException(DEVICES_API_REQUIRED_NAME);
         }
         if (Optional.ofNullable(device.getBrand()).orElse("").isEmpty()) {
-            throw new IllegalArgumentException("Device brand is required");
+            throw new IllegalArgumentException(DEVICES_API_REQUIRED_BRAND);
         }
     }
 

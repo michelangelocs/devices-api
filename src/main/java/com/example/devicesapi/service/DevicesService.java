@@ -61,7 +61,7 @@ public class DevicesService {
             return devicesRepository.save(deviceToUpdate);
         }).orElseGet(() -> {
             logDeviceNotFound(id);
-            return null;
+            throw new IllegalStateException(DEVICES_API_NOT_FOUND);
         });
     }
 
@@ -77,7 +77,10 @@ public class DevicesService {
                 devicesRepository.deleteById(id);
                 log.info(DEVICES_API_DELETE, id);
             }
-        }, () -> logDeviceNotFound(id));
+        }, () -> {
+            logDeviceNotFound(id);
+            throw new IllegalStateException(DEVICES_API_NOT_FOUND);
+        });
     }
 
     public Device getDeviceById(@NonNull String id) {

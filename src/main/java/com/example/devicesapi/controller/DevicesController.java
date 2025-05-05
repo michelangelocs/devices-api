@@ -23,22 +23,32 @@ public class DevicesController {
     private final DevicesService devicesService;
 
     @PostMapping("/save")
-    public ResponseEntity<Object> saveDevice (@RequestBody @NonNull Device device) {
+    public ResponseEntity<Device> saveDevice (@RequestBody @NonNull Device device) {
         try {
+            log.info("Received device {}", device);
             return new ResponseEntity<>(devicesService.saveDevice(device), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/update/{id}")
-    public Device updateDevice(@PathVariable @NonNull String id, @RequestBody @NonNull Device device) {
-        return devicesService.updateDevice(id, device);
+    public ResponseEntity<Device> updateDevice(@PathVariable @NonNull String id, @RequestBody @NonNull Device device) {
+        try {
+            return new ResponseEntity<>(devicesService.updateDevice(id, device), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteDevice(@PathVariable("id") @NonNull String id) {
-        devicesService.deleteDevice(id);
+    public ResponseEntity<String> deleteDevice(@PathVariable("id") @NonNull String id) {
+        try {
+            devicesService.deleteDevice(id);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return null;
     }
 }

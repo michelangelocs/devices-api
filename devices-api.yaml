@@ -25,7 +25,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/Device"
+              "$ref": "#/components/schemas/DeviceToUpdate"
         required: true
       responses:
         '200':
@@ -43,8 +43,55 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/Device"
+              "$ref": "#/components/schemas/DeviceToCreate"
         required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/Device"
+  "/api/devices/get":
+    get:
+      tags:
+        - devices-controller
+      operationId: getDeviceByParams
+      parameters:
+        - name: brand
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - AVAILABLE
+              - IN_USE
+              - INACTIVE
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Device"
+  "/api/devices/get/{id}":
+    get:
+      tags:
+        - devices-controller
+      operationId: getDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -72,11 +119,40 @@ paths:
                 type: string
 components:
   schemas:
+    DeviceToUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        state:
+          type: string
+          enum:
+            - AVAILABLE
+            - IN_USE
+            - INACTIVE
     Device:
       type: object
       properties:
         id:
           type: string
+        name:
+          type: string
+        brand:
+          type: string
+        state:
+          type: string
+          enum:
+            - AVAILABLE
+            - IN_USE
+            - INACTIVE
+        creationTime:
+          type: string
+          format: date-time
+    DeviceToCreate:
+      type: object
+      properties:
         name:
           type: string
         brand:

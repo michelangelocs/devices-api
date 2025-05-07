@@ -5,6 +5,9 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.example.devicesapi.model.Device;
+import com.example.devicesapi.model.DeviceDTO;
+import com.example.devicesapi.model.DeviceToCreate;
+import com.example.devicesapi.model.DeviceToUpdate;
 import com.example.devicesapi.model.State;
 import com.example.devicesapi.repositories.DevicesRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,23 +59,23 @@ class DevicesServiceTest {
 
     @Test
     void saveDevice_success () {
-        devicesService.saveDevice(Device.builder().name("name").brand("brand").build());
-
-        ArgumentCaptor<Device> deviceArgumentCaptor = ArgumentCaptor.forClass(Device.class);
+        when(devicesRepository.save(any(DeviceDTO.class))).thenReturn(getDevice(State.AVAILABLE));
+        devicesService.saveDevice(DeviceToCreate.builder().name("name").brand("brand").build());
+        ArgumentCaptor<DeviceDTO> deviceArgumentCaptor = ArgumentCaptor.forClass(DeviceDTO.class);
         verify(devicesRepository).save(deviceArgumentCaptor.capture());
-        Device savedDevice = deviceArgumentCaptor.getValue();
+        DeviceDTO savedDevice = deviceArgumentCaptor.getValue();
 
         assertNotNull(savedDevice);
     }
 
     @Test
     void saveDevice_failure () {
-        assertThrows(IllegalArgumentException.class, ()-> devicesService.saveDevice(new Device()));
+        assertThrows(IllegalArgumentException.class, ()-> devicesService.saveDevice(new DeviceToCreate()));
     }
 
     @Test
     void saveDevice_failure2 () {
-        assertThrows(IllegalArgumentException.class, ()-> devicesService.saveDevice(Device.builder().name("name").build()));
+        assertThrows(IllegalArgumentException.class, ()-> devicesService.saveDevice(DeviceToCreate.builder().name("name").build()));
     }
 
     @Test
@@ -84,16 +86,16 @@ class DevicesServiceTest {
     @Test
     void updateDevice_success () {
         when(devicesRepository.findById(any(String.class))).thenReturn(Optional.ofNullable(getDevice(State.AVAILABLE)));
-        when(devicesRepository.save(any(Device.class))).thenReturn(getDevice(State.IN_USE));
-        assertNotNull(devicesService.updateDevice("id", getDevice(State.IN_USE)));
+        when(devicesRepository.save(any(DeviceDTO.class))).thenReturn(getDevice(State.IN_USE));
+        assertNotNull(devicesService.updateDevice("id", getDeviceToUpdate(State.IN_USE)));
     }
 
     @Test
     void updateDevice_success2 () {
         when(devicesRepository.findById(any(String.class))).thenReturn(Optional.ofNullable(getDevice(State.IN_USE)));
-        when(devicesRepository.save(any(Device.class))).thenReturn(getDevice(State.INACTIVE));
+        when(devicesRepository.save(any(DeviceDTO.class))).thenReturn(getDevice(State.INACTIVE));
 
-        assertNotNull(devicesService.updateDevice("id", getDevice(State.INACTIVE)));
+        assertNotNull(devicesService.updateDevice("id", getDeviceToUpdate(State.INACTIVE)));
 
         verify(this.appenderMock, times(2)).doAppend(this.logEvenCaptor.capture());
         assertEquals(Level.WARN, logEvenCaptor.getAllValues().getFirst().getLevel());
@@ -103,7 +105,7 @@ class DevicesServiceTest {
     @Test
     void updateDevice_failure () {
         when(devicesRepository.findById(any(String.class))).thenReturn(Optional.empty());
-        assertThrows(IllegalStateException.class, () -> devicesService.updateDevice("id", getDevice(State.INACTIVE)));
+        assertThrows(IllegalStateException.class, () -> devicesService.updateDevice("id", getDeviceToUpdate(State.INACTIVE)));
 
         verify(this.appenderMock, times(1)).doAppend(this.logEvenCaptor.capture());
         assertEquals(Level.ERROR, logEvenCaptor.getAllValues().getFirst().getLevel());
@@ -117,7 +119,7 @@ class DevicesServiceTest {
 
     @Test
     void updateDevice_null2 () {
-        assertThrows(NullPointerException.class, () -> devicesService.updateDevice(null, new Device()));
+        assertThrows(NullPointerException.class, () -> devicesService.updateDevice(null, new DeviceToUpdate()));
     }
 
     @Test
@@ -175,13 +177,30 @@ class DevicesServiceTest {
     }
 
 
-    private Device getDevice(State state) {
-        return Device.builder()
+    private DeviceDTO getDevice (State state) {
+        return DeviceDTO.builder()
                 .id("id")
                 .name("name")
                 .brand("brand")
                 .state(state)
                 .creationTime(LocalDateTime.now())
+                .build();
+    }
+
+    private DeviceToCreate getDeviceToCreate (State state) {
+        return DeviceToCreate.builder()
+                .name("name")
+                .brand("brand")
+                .state(state)
+                .creationTime(LocalDateTime.now())
+                .build();
+    }
+
+    private DeviceToUpdate getDeviceToUpdate (State state) {
+        return DeviceToUpdate.builder()
+                .name("name")
+                .brand("brand")
+                .state(state)
                 .build();
     }
 

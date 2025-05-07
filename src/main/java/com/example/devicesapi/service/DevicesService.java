@@ -1,6 +1,9 @@
 package com.example.devicesapi.service;
 
 import com.example.devicesapi.model.Device;
+import com.example.devicesapi.model.DeviceDTO;
+import com.example.devicesapi.model.DeviceToCreate;
+import com.example.devicesapi.model.DeviceToUpdate;
 import com.example.devicesapi.model.State;
 import com.example.devicesapi.repositories.DevicesRepository;
 import lombok.NonNull;
@@ -9,12 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.example.devicesapi.base.Constants.DEVICES_API_DELETE;
 import static com.example.devicesapi.base.Constants.DEVICES_API_DELETE_WARN;
 import static com.example.devicesapi.base.Constants.DEVICES_API_NOT_FOUND;
 import static com.example.devicesapi.base.Constants.DEVICES_API_SAVE;
+import static com.example.devicesapi.base.Constants.DEVICES_API_SEARCH;
 import static com.example.devicesapi.base.Constants.DEVICES_API_UPDATE;
 import static com.example.devicesapi.base.Constants.DEVICES_API_UPDATE_WARN;
 import static com.example.devicesapi.base.Validator.validate;
@@ -31,10 +36,11 @@ public class DevicesService {
      * We also check if the creationTime was preset, in which case we set it to the current time if not, and also the state is set to
      * AVAILABLE if not stated in the request body
      * */
-    public Device saveDevice (@NonNull Device device) {
+    public Device saveDevice (@NonNull DeviceToCreate device) {
         validate(device);
         log.info(DEVICES_API_SAVE, device);
-        return devicesRepository.save(device);
+        DeviceDTO deviceDTO = devicesRepository.save(device.toDeviceDTO());
+        return deviceDTO.toDevice();
     }
 
     /**
@@ -48,7 +54,7 @@ public class DevicesService {
      * This could be avoided by checking if the device is also being changed to either AVAILABLE or INACTIVE instead of checking the current
      * DB state
      * */
-    public Device updateDevice(@NonNull String id, @NonNull Device device) {
+    public Device updateDevice(@NonNull String id, @NonNull DeviceToUpdate device) {
         return devicesRepository.findById(id).map(deviceToUpdate -> {
             if (deviceToUpdate.getState() != State.IN_USE) {
                 Optional.ofNullable(device.getName()).ifPresent(deviceToUpdate::setName);
@@ -58,7 +64,8 @@ public class DevicesService {
             }
             Optional.ofNullable(device.getState()).ifPresent(deviceToUpdate::setState);
             log.info(DEVICES_API_UPDATE, deviceToUpdate);
-            return devicesRepository.save(deviceToUpdate);
+            DeviceDTO deviceDTO = devicesRepository.save(deviceToUpdate);
+            return deviceDTO.toDevice();
         }).orElseGet(() -> {
             logDeviceNotFound(id);
             throw new IllegalStateException(DEVICES_API_NOT_FOUND);
@@ -84,19 +91,31 @@ public class DevicesService {
     }
 
     public Device getDeviceById(@NonNull String id) {
-        return devicesRepository.findById(id).orElse(null);
+        log.info(DEVICES_API_SEARCH, id);
+        try {
+            return Objects.requireNonNull(devicesRepository.findById(id).orElse(null)).toDevice();
+        } catch (NullPointerException e) {
+            logDeviceNotFound(id);
+            return null;
+        }
     }
 
     public List<Device> getAllDevices() {
-        return devicesRepository.findAll().stream().toList();
+        return devicesRepository.findAll().stream()
+                .map(DeviceDTO::toDevice)
+                .toList();
     }
 
     public List<Device> getDevicesByBrand(@NonNull String brand) {
-        return devicesRepository.findByBrand(brand);
+        return devicesRepository.findByBrand(brand).stream()
+                .map(DeviceDTO::toDevice)
+                .toList();
     }
 
     public List<Device> getDevicesByState(@NonNull State state) {
-        return devicesRepository.findByState(state);
+        return devicesRepository.findByState(state).stream()
+                .map(DeviceDTO::toDevice)
+                .toList();
     }
 
     private void logDeviceNotFound(@NonNull String id) {

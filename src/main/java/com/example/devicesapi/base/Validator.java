@@ -1,6 +1,6 @@
 package com.example.devicesapi.base;
 
-import com.example.devicesapi.model.Device;
+import com.example.devicesapi.model.DeviceToCreate;
 import com.example.devicesapi.model.State;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public class Validator {
         throw new IllegalStateException("Validator class");
     }
 
-    public static void validate(Device device) {
+    public static void validate(DeviceToCreate device) {
         device.setCreationTime(Optional.ofNullable(device.getCreationTime()).orElse(LocalDateTime.now()));
         device.setState(Optional.ofNullable(device.getState()).orElse(State.AVAILABLE));
 

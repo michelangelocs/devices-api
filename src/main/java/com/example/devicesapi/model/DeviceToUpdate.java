@@ -1,23 +1,24 @@
 package com.example.devicesapi.model;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Device {
+public class DeviceToUpdate {
 
-    private String id;
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("brand")
     private String brand;
+
+    @JsonProperty("state")
     private State state;
-    private LocalDateTime creationTime;
 
 }

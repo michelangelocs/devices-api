@@ -1,6 +1,7 @@
 package com.example.devicesapi.controller;
 
 import com.example.devicesapi.model.Device;
+import com.example.devicesapi.model.DeviceDTO;
 import com.example.devicesapi.model.State;
 import com.example.devicesapi.service.DevicesService;
 import org.junit.jupiter.api.Test;

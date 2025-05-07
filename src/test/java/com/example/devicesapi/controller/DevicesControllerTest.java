@@ -1,8 +1,10 @@
 package com.example.devicesapi.controller;
 
 import com.example.devicesapi.model.Device;
+import com.example.devicesapi.model.DeviceDTO;
+import com.example.devicesapi.model.DeviceToCreate;
+import com.example.devicesapi.model.DeviceToUpdate;
 import com.example.devicesapi.model.State;
-import com.example.devicesapi.repositories.DevicesRepository;
 import com.example.devicesapi.service.DevicesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,8 +36,8 @@ public class DevicesControllerTest {
 
     @Test
     void saveDevice_success() {
-        when(devicesService.saveDevice(any(Device.class))).thenReturn(mock(Device.class));
-        assertNotNull(devicesController.saveDevice(getDevice(State.IN_USE)));
+        when(devicesService.saveDevice(any(DeviceToCreate.class))).thenReturn(mock(Device.class));
+        assertNotNull(devicesController.saveDevice(getDeviceToCreate(State.IN_USE)));
     }
 
     @Test
@@ -44,13 +47,49 @@ public class DevicesControllerTest {
 
     @Test
     void updateDevice_success () {
-        when(devicesService.updateDevice(anyString() ,any(Device.class))).thenReturn(mock(Device.class));
-        assertNotNull(devicesController.updateDevice("id" ,getDevice(State.AVAILABLE)));
+        when(devicesService.updateDevice(anyString() ,any(DeviceToUpdate.class))).thenReturn(mock(Device.class));
+        assertNotNull(devicesController.updateDevice("id" ,getDeviceToUpdate(State.AVAILABLE)));
     }
 
     @Test
     void updateDevice_null() {
-        assertThrows(NullPointerException.class, () -> devicesController.updateDevice(null, getDevice(State.AVAILABLE)));
+        assertThrows(NullPointerException.class, () -> devicesController.updateDevice(null, getDeviceToUpdate(State.AVAILABLE)));
+    }
+
+
+    @Test
+    void device_success() {
+        when(devicesService.getDeviceById(anyString())).thenReturn(mock(Device.class));
+        assertNotNull(devicesController.getDevice("id"));
+    }
+
+    @Test
+    void device_null() {
+        assertThrows(NullPointerException.class, () -> devicesController.getDevice(null));
+    }
+
+    @Test
+    void devices_success_all () {
+        when(devicesService.getAllDevices()).thenReturn(mock(List.class));
+        assertNotNull(devicesController.getDeviceByParams(null, null));
+    }
+
+    @Test
+    void devices_success_by_brand () {
+        when(devicesService.getDevicesByBrand("brand")).thenReturn(mock(List.class));
+        assertNotNull(devicesController.getDeviceByParams("brand", null));
+    }
+
+    @Test
+    void devices_success_by_brand_and_state () {
+        when(devicesService.getDevicesByBrand("brand")).thenReturn(mock(List.class));
+        assertNotNull(devicesController.getDeviceByParams("brand", State.AVAILABLE));
+    }
+
+    @Test
+    void devices_success_by_state () {
+        when(devicesService.getDevicesByState(State.AVAILABLE)).thenReturn(mock(List.class));
+        assertNotNull(devicesController.getDeviceByParams(null, State.AVAILABLE));
     }
 
     @Test
@@ -64,9 +103,10 @@ public class DevicesControllerTest {
         assertThrows(NullPointerException.class, () -> devicesController.deleteDevice(null));
     }
 
-    private Device getDevice(State state) {
-        return Device.builder()
-                .id("id")
+
+
+    private DeviceToCreate getDeviceToCreate (State state) {
+        return DeviceToCreate.builder()
                 .name("name")
                 .brand("brand")
                 .state(state)
@@ -74,5 +114,11 @@ public class DevicesControllerTest {
                 .build();
     }
 
-
+    private DeviceToUpdate getDeviceToUpdate (State state) {
+        return DeviceToUpdate.builder()
+                .name("name")
+                .brand("brand")
+                .state(state)
+                .build();
+    }
 }

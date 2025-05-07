@@ -36,7 +36,5 @@ By following these steps you should be able to have the application up and runni
 
 # Test
 In order to test the endpoints created in the application you can:
-1. Access http://localhost:8080/swagger-ui/index.html to test SAVE, UPDATE and DELETE.
-2. Access http://localhost:8080/graphiql?path=/graphql to test FETCH (Single, All, by Brand or by State)
-2. Use the `.curl` files in the `resources` directory,
-import them to `Postman` or `Insomnia`, and you'll be able to perform the requests and test their functionality.
+1. Access http://localhost:8080/swagger-ui/index.html to test SAVE, UPDATE, DELETE and FETCH (Single, All, by Brand or by State).
+2. Access http://localhost:8080/graphiql?path=/graphql to test FETCH (Single, All, by Brand or by State) in GraphQL (does not work with Docker).

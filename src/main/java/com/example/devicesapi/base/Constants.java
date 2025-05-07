@@ -13,6 +13,7 @@ public class Constants {
     public static final String DEVICES_API_NOT_FOUND= "DEVICES_API_NOT_FOUND: Device with id '{}' not found";
     public static final String DEVICES_API_REQUIRED_NAME= "DEVICES_API_REQUIRED_NAME: Device name is required";
     public static final String DEVICES_API_REQUIRED_BRAND= "DEVICES_API_REQUIRED_BRAND: Device brand is required";
+    public static final String DEVICES_API_SEARCH = "DEVICES_API_SEARCH: Searching for device with id '{}'";
 
 
 

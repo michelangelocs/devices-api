@@ -1,9 +1,0 @@
-curl --request POST \
-  --url http://localhost:8080/api/devices/update/6815280838615022ed7c36b3 \
-  --header 'Content-Type: application/json' \
-  --header 'User-Agent: insomnia/11.0.2' \
-  --data '{
-	"name":"device48",
-	"brand":"brand03",
-	"state":"INACTIVE"
-}'

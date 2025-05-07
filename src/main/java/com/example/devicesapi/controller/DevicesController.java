@@ -2,6 +2,7 @@ package com.example.devicesapi.controller;
 
 import com.example.devicesapi.model.Device;
 import com.example.devicesapi.service.DevicesService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

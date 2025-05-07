@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.1
 info:
   title: Devices API
   description: REST API capable of persisting and managing device resources
@@ -6,195 +6,73 @@ info:
   contact:
     name: "Miguel Ângelo V. G. Carvalho dos Santos"
     email: "miguelangelosantos98@gmail.com"
-
 servers:
-  - url: 'http://localhost:8080'
-
+  - url: http://localhost:8080
+    description: Generated server url
 paths:
-  /api/devices/save:
+  "/api/devices/update/{id}":
     post:
-      summary: Create a new Device
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CDevice'
-      responses:
-        '201':
-          $ref: '#/components/schemas/CDevice'
-  /api/devices/update/{id}:
-    post:
-      summary: Update an existing Device
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UDevice'
+      tags:
+        - devices-controller
+      operationId: updateDevice
       parameters:
-        - $ref: '#/components/parameters/id'
-      responses:
-        '201':
-          $ref: '#/components/schemas/CDevice'
-  /api/devices/delete/{id}:
-    delete:
-      summary: Delete an existing Device
-      parameters:
-        - $ref: '#/components/parameters/id'
-      responses:
-        '200':
-          description: DELETED
-  /graphql:
-    post:
-      summary: Fetch Devices (Single, All, By Brand or By State)
-      requestBody:
-        description: Query request body
-        required: true
-        content:
-          application/json:
-            examples:
-              device:
-                value:
-                  {
-                    "query": "query ($id: String!) { device(id: $id) { id name brand state creationTime } }",
-                    "variables": {
-                      "id": "68152d0238615022ed7c36b7"
-                    }
-                  }
-              devices:
-                value:
-                  {
-                    "query": "query ($brand: String, $state: String) { devices (brand: $brand, state: $state) { id name brand state creationTime } }",
-                    "variables": {
-                      "brand": "null",
-                      "state":"null"
-                    }
-                  }
-            schema:
-              $ref: '#/components/schemas/GraphQLRequest'
-      responses:
-        '200':
-          description: 200 OK - device - Success
-          content:
-            application/json:
-              examples:
-                device-success:
-                  value:
-                    {
-                      "data": {
-                        "device": {
-                          "id": "68152d0238615022ed7c36b7",
-                          "name": "device01",
-                          "brand": "brand01",
-                          "state": "AVAILABLE",
-                          "creationTime": "2025-05-02T21:37:22.021"
-                        }
-                      }
-                    }
-              schema:
-                $ref: '#/components/schemas/DeviceResponse'
-        '201':
-          description: 200 OK - devices - Success
-          content:
-            application/json:
-              examples:
-                devices-success:
-                  value:
-                    {
-                      "data": {
-                        "devices":
-                          [
-                            {
-                              "id": "68152d0238615022ed7c36b7",
-                              "name": "device01",
-                              "brand": "brand01",
-                              "state": "AVAILABLE",
-                              "creationTime": "2025-05-02T21:37:22.021"
-                            },
-                            {
-                              "id": "68152d0b38615022ed7c36b9",
-                              "name": "device03",
-                              "brand": "brand03",
-                              "state": "AVAILABLE",
-                              "creationTime": "2025-05-02T21:37:31.743"
-                            },
-                            {
-                              "id": "68152d1b38615022ed7c36ba",
-                              "name": "device04",
-                              "brand": "brand03",
-                              "state": "INACTIVE",
-                              "creationTime": "2025-05-02T21:37:47.371"
-                            },
-                            {
-                              "id": "68152d2c38615022ed7c36bb",
-                              "name": "device05",
-                              "brand": "brand03",
-                              "state": "IN_USE",
-                              "creationTime": "2025-05-02T21:38:04.578"
-                            }
-                          ]
-                      }
-                    }
-              schema:
-                $ref: "#/components/schemas/DevicesResponse"
-
-components:
-  parameters:
-    id:
-      name: 'id'
-      in: 'path'
-      required: true
-      description: 'The id of the Device to update/delete'
-      schema:
-        type: 'string'
-        pattern: '^[0-9a-zA-Z_/,. ()-]{1,25}$'
-  schemas:
-    CDevice:
-      required:
-        - name
-        - brand
-      type: object
-      properties:
-        name:
-          type: string
-        brand:
-          type: string
-        state:
-          type: string
-          enum:
-            - AVAILABLE
-            - IN_USE
-            - INACTIVE
-        creation-time:
-          type: string
-          format: date-time
-    UDevice:
-      type: object
-      properties:
-        name:
-          type: string
-        brand:
-          type: string
-        state:
-          type: string
-          enum:
-            - AVAILABLE
-            - IN_USE
-            - INACTIVE
-    GraphQLRequest:
-      required:
-        - query
-        - variables
-      type: object
-      properties:
-        query:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
+        - name: id
+          in: path
+          required: true
+          schema:
             type: string
-    DeviceResponse:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/Device"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/Device"
+  "/api/devices/save":
+    post:
+      tags:
+        - devices-controller
+      operationId: saveDevice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/Device"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/Device"
+  "/api/devices/delete/{id}":
+    delete:
+      tags:
+        - devices-controller
+      operationId: deleteDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+components:
+  schemas:
+    Device:
       type: object
       properties:
         id:
@@ -212,13 +90,3 @@ components:
         creation-time:
           type: string
           format: date-time
-    DevicesResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-              devices:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DeviceResponse'
